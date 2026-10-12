@@ -11,17 +11,41 @@ export const trim = (i) => {
   return rest;
 };
 
+// Every deploy gets a version made from the contents of the site's scripts and styles.
+// Their URLs carry it (?v=...), so browsers and Cloudflare's cache can never serve an old copy.
+const ASSET_FILES = ["/assets/app.css", "/assets/app.js", "/assets/lib.js", "/config.js"];
+let versionPromise;
+function assetVersion(env, url) {
+  versionPromise ??= Promise.all(ASSET_FILES.map((f) => env.ASSETS.fetch(new Request(new URL(f, url))).then((r) => r.text())))
+    .then((texts) => crypto.subtle.digest("SHA-1", new TextEncoder().encode(texts.join("\n"))))
+    .then((buf) => [...new Uint8Array(buf)].slice(0, 5).map((b) => b.toString(16).padStart(2, "0")).join(""))
+    .catch(() => {
+      versionPromise = undefined;
+      return String(Date.now());
+    });
+  return versionPromise;
+}
+
+export function versionAssets(shell, v) {
+  const importmap = { imports: { "/assets/lib.js": `/assets/lib.js?v=${v}`, "/config.js": `/config.js?v=${v}` } };
+  return shell
+    .replace('href="/assets/app.css"', `href="/assets/app.css?v=${v}"`)
+    .replace('<script type="module" src="/assets/app.js">', `<script type="importmap">${JSON.stringify(importmap)}</script>\n<script type="module" src="/assets/app.js?v=${v}">`);
+}
+
 export async function onRequest(ctx) {
   const { request, env, next } = ctx;
   const url = new URL(request.url);
   if (request.method !== "GET" || !PAGES.test(url.pathname)) return next();
 
   const path = url.pathname.replace(/\/$/, "") || "/";
-  const [data, reviews, shell] = await Promise.all([
+  const [data, reviews, rawShell, v] = await Promise.all([
     getListings(env),
     getReviews(env),
     env.ASSETS.fetch(new Request(new URL("/", url))).then((r) => r.text()),
+    assetVersion(env, url),
   ]);
+  const shell = versionAssets(rawShell, v);
 
   const payload = {
     source: data.source,
@@ -73,7 +97,7 @@ export async function onRequest(ctx) {
   return new Response(html, {
     headers: {
       "content-type": "text/html; charset=utf-8",
-      "cache-control": "public, max-age=0, s-maxage=300",
+      "cache-control": "no-cache",
     },
   });
 }
