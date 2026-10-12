@@ -1,0 +1,16 @@
+{
+  "name": "taystrades-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy",
+    "sync:dev": "cd sync-worker && wrangler dev --test-scheduled",
+    "sync:deploy": "cd sync-worker && wrangler deploy",
+    "images": "node scripts/gen-sample-images.mjs",
+    "preview": "node scripts/build-preview.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

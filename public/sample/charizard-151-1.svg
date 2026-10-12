@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+<rect width="800" height="800" fill="#E8EEF3"/><rect y="560" width="800" height="240" fill="#D5DEE6"/>
+<ellipse cx="400" cy="640" rx="250" ry="26" fill="#1C2B3A" opacity=".12"/>
+<g transform="translate(250 150)"><rect x="0" y="0" width="300" height="420" rx="16" fill="#F2C94C" /><rect x="14" y="14" width="272" height="392" rx="10" fill="#FFD98A" /><rect x="28" y="60" width="244" height="170" rx="6" fill="#FFB070" /><path d="M150 90 C210 110 230 170 190 210 C170 180 140 190 120 215 C80 170 100 110 150 90Z" fill="#E2552B"/><rect x="28" y="250" width="244" height="22" rx="4" fill="#FFF6DD" /><rect x="28" y="290" width="200" height="14" rx="4" fill="#FFF6DD" /><rect x="28" y="318" width="220" height="14" rx="4" fill="#FFF6DD" /><rect x="28" y="26" width="150" height="22" rx="4" fill="#FFF6DD" /></g>
+<text x="28" y="772" font-family="Arial, sans-serif" font-size="22" fill="#5B6B7A">Sample photo</text></svg>

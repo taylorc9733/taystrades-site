@@ -1,0 +1,14 @@
+# Cloudflare Worker that syncs eBay listings and Google reviews into KV.
+name = "taystrades-sync"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+[triggers]
+crons = ["0 * * * *"] # every hour, on the hour
+
+[[kv_namespaces]]
+binding = "TT_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID" # same id as ../wrangler.toml
+
+[observability]
+enabled = true # keeps sync logs (and eBay errors) in the dashboard

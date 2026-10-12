@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+<rect width="800" height="800" fill="#E8EEF3"/><rect y="560" width="800" height="240" fill="#D5DEE6"/>
+<ellipse cx="400" cy="640" rx="250" ry="26" fill="#1C2B3A" opacity=".12"/>
+<g transform="translate(200 140) rotate(-8)"><rect x="0" y="0" width="300" height="470" rx="14" fill="#D7322C" /><rect x="16" y="56" width="268" height="398" rx="6" fill="#9CC9E4" /><polygon points="16,380 90,250 160,330 230,220 284,300 284,454 16,454" fill="#6E8F5C"/><polygon points="16,454 16,410 140,360 284,420 284,454" fill="#3D6B4F"/><circle cx="220" cy="130" r="34" fill="#FFE9A8" /><rect x="0" y="0" width="300" height="44" rx="14" fill="#D7322C" /></g><g transform="translate(520 470)"><rect x="0" y="0" width="80" height="100" rx="10" fill="#E04A3F" /><rect x="10" y="10" width="60" height="60" rx="4" fill="#F7F9FB" /></g>
+<text x="28" y="772" font-family="Arial, sans-serif" font-size="22" fill="#5B6B7A">Sample photo</text></svg>

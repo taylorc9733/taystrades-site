@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+<rect width="800" height="800" fill="#E8EEF3"/><rect y="560" width="800" height="240" fill="#D5DEE6"/>
+<ellipse cx="400" cy="640" rx="250" ry="26" fill="#1C2B3A" opacity=".12"/>
+<g transform="translate(260 60) scale(2.4)"><rect x="0" y="30" width="90" height="240" rx="45" fill="#F3F5F7" /><circle cx="45" cy="100" r="20" fill="#1C2B3A" /></g>
+<text x="28" y="772" font-family="Arial, sans-serif" font-size="22" fill="#5B6B7A">Sample photo</text></svg>
