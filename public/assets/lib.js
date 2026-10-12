@@ -128,7 +128,8 @@ export function localBusinessSchema(feedback) {
     "@context": "https://schema.org",
     "@type": "Store",
     "@id": siteUrl("/#business"),
-    name: B.name,
+    name: B.googleName || B.name,
+    alternateName: B.name,
     url: siteUrl("/"),
     telephone: `+${B.whatsapp}`,
     email: B.email,
@@ -136,7 +137,7 @@ export function localBusinessSchema(feedback) {
     image: siteUrl("/og.png"),
     priceRange: "££",
     address: { "@type": "PostalAddress", addressLocality: B.town, addressRegion: B.county, addressCountry: "GB" },
-    areaServed: `${B.town}, ${B.county}`,
+    areaServed: (B.serviceArea || [`${B.town}, ${B.county}`]).map((name) => ({ "@type": "Place", name })),
     openingHoursSpecification: B.hours.map((h) => ({
       "@type": "OpeningHoursSpecification",
       dayOfWeek: h.days.map((d) => ({ Mo: "Monday", Tu: "Tuesday", We: "Wednesday", Th: "Thursday", Fr: "Friday", Sa: "Saturday", Su: "Sunday" })[d]),

@@ -6,6 +6,8 @@
 export default {
   business: {
     name: "Taystrades",
+    // Exactly as your Google Business Profile spells it. Used in the data Google reads.
+    googleName: "Tays Trades",
     tagline: "Pre-owned tech, games and collectables. Bought, sold and swapped.",
     town: "Totton",
     county: "Southampton",
@@ -20,6 +22,8 @@ export default {
       { days: ["Su"], opens: "09:00", closes: "18:00" },
     ],
     collection: "Collection from Totton, or tracked postage anywhere in the UK.",
+    // Your Google profile's service areas (you don't show a street address, so none is published here either).
+    serviceArea: ["Totton and Eling, Southampton", "Southampton", "Eastleigh", "Romsey", "Lyndhurst", "Bournemouth", "Salisbury", "Hampshire", "Dorset", "Wiltshire"],
   },
 
   ebay: {
