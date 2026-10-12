@@ -11,6 +11,17 @@ export function money(price) {
   return n.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// Collection price: the eBay price less config.collectionDiscount, rounded down to the pound.
+// Returns null when the discount is off or would save less than £1.
+export function collectPrice(item) {
+  const pct = Number(config.collectionDiscount?.percent) || 0;
+  const full = Number(item?.price?.value ?? item?.price ?? 0);
+  if (pct <= 0 || !full) return null;
+  const price = Math.floor(full * (1 - pct / 100));
+  const saving = full - price;
+  return saving >= 1 ? { price, saving, pct } : null;
+}
+
 // "249.99" -> { pounds: "249", pence: "99" }
 export function priceParts(price) {
   const [pounds, pence] = money(price).split(".");
@@ -96,6 +107,13 @@ export const msg = {
     mail(
       `Offer or trade-in: ${item.title}`,
       `Hi, I'm interested in ${item.title} (£${money(item.price)}) ${item.itemWebUrl}. Would you consider an offer or a trade-in against it? I have:\n\n`
+    ),
+  collect: (item, c) =>
+    wa(`Hi, I'd like to collect ${item.title} from ${B.town} at the collection price of £${c.price.toLocaleString("en-GB")}. ${siteUrl(itemPath(item))} When could I pick it up?`),
+  collectMail: (item, c) =>
+    mail(
+      `Collection: ${item.title}`,
+      `Hi, I'd like to collect ${item.title} from ${B.town} at the collection price of £${c.price.toLocaleString("en-GB")}. ${siteUrl(itemPath(item))}\n\nWhen could I pick it up?\n\n`
     ),
   tradeIn: (a) => wa(tradeInText(a, "I'll send photos here.")),
   tradeInMail: (a) => mail(`Trade-in price: ${a.item}`, tradeInText(a, "I'll attach photos to this email.")),

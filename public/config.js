@@ -44,6 +44,10 @@ export default {
   // but keep it false on the live site so customers never see items you don't have.
   showSampleListings: false,
 
+  // Discount for buyers who collect in person instead of buying on eBay (no eBay fees or postage).
+  // percent: 0 turns it off. The collection price is rounded down to the whole pound.
+  collectionDiscount: { percent: 10 },
+
   analytics: {
     plausibleDomain: "", // e.g. "taystrades.co.uk" once you have a Plausible site. Tracks button clicks.
     cloudflareBeaconToken: "", // Cloudflare Web Analytics token. Page views only.

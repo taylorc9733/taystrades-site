@@ -2,7 +2,7 @@
 import config from "../config.js";
 import {
   money, priceParts, itemPath, idFromPath, gradeFor, isJustListed, shippingText, img, allImages,
-  msg, metaFor, esc, DAY,
+  msg, metaFor, esc, DAY, collectPrice,
 } from "./lib.js";
 
 const B = config.business;
@@ -102,6 +102,17 @@ const trustLine = (short) =>
 
 const buyBtn = (item, extra = "") =>
   `<a class="btn btn-primary ${extra}" href="${esc(item.itemWebUrl)}" target="_blank" rel="noopener" data-track="Buy on eBay" data-item="${esc(item.title)}">Buy on eBay<span class="sr"> (opens in a new tab)</span></a>`;
+
+function collectBox(item) {
+  const c = collectPrice(item);
+  if (!c) return "";
+  return `<div class="collect">
+    <p class="collect-head">${icon("pin")}<span>Collect from ${esc(B.town)} for <b>£${esc(c.price.toLocaleString("en-GB"))}</b></span></p>
+    <p class="collect-note">Save £${esc(money(c.saving))} (${c.pct}% off) when you pick it up in person. Pay by cash or bank transfer on collection, after you've seen it. Collection sales aren't covered by eBay's guarantee.</p>
+    ${waBtn(msg.collect(item, c), "Reserve for collection", "btn-block")}
+    <p class="muted collect-mail">Or <a href="${esc(msg.collectMail(item, c))}" data-track="Email">reserve by email</a>.</p>
+  </div>`;
+}
 
 const waBtn = (url, text, cls = "") => `<a class="btn ${cls}" href="${esc(url)}" target="_blank" rel="noopener" data-track="WhatsApp">${WA}${esc(text)}</a>`;
 
@@ -488,6 +499,7 @@ function productPage(item) {
         <div class="actions">
           ${buyBtn(item, "btn-lg btn-block")}
           ${trustLine(false)}
+          ${collectBox(item)}
           <div class="two">
             ${waBtn(msg.product(item), "Ask a question")}
             <a class="btn btn-mint" href="${esc(msg.offer(item))}" target="_blank" rel="noopener" data-track="WhatsApp" data-kind="offer">${icon("swap")}Offer or trade against this</a>
