@@ -14,7 +14,7 @@ export default {
     whatsapp: "447475762695", // international format, no +
     phoneDisplay: "07475 762695",
     email: "taystrades42@gmail.com",
-    domain: "taystrades.pages.dev", // your free Cloudflare address for now; change when you add your own domain
+    domain: "www.taystrades.co.uk", // the address Google should use (canonical links, sitemap, schema)
     hoursText: "Mon to Sat, 8am to 9pm. Sunday, 9am to 6pm",
     // Used for schema.org opening hours. Days: Mo Tu We Th Fr Sa Su
     hours: [
