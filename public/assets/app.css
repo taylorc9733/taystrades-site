@@ -479,7 +479,21 @@ legend { padding: 0; margin-bottom: 6px; }
 .gallery .main { aspect-ratio: 4 / 5; }
 @media (min-width: 900px) { .gallery .main { aspect-ratio: 3 / 4; } }
 .gallery .main { width: 100%; padding: 0; cursor: zoom-in; }
-.gallery .main img { pointer-events: none; }
+.gallery .main img { pointer-events: none; -webkit-user-select: none; user-select: none; }
+.gallery .main { touch-action: pan-y pinch-zoom; }
+.stage { position: relative; }
+.g-nav {
+  position: absolute; top: 50%; translate: 0 -50%; width: 44px; height: 44px; border-radius: 50%;
+  border: 2px solid var(--ink); background: rgba(255, 255, 255, .92); color: var(--ink);
+  display: grid; place-items: center; cursor: pointer; z-index: 2;
+}
+.g-nav:hover { background: var(--marigold); }
+.g-nav .icon { width: 22px; height: 22px; }
+.g-prev { left: 10px; } .g-next { right: 10px; }
+.g-count {
+  position: absolute; right: 12px; bottom: 12px; z-index: 2; padding: 3px 10px; border-radius: 999px;
+  background: var(--ink); color: var(--paper); font-size: .875rem; font-weight: 600; pointer-events: none;
+}
 .thumbs { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; padding: 3px; }
 .thumbs button { flex: none; width: 60px; height: 60px; padding: 0; border: 1.5px solid var(--line); border-radius: var(--r-btn); background: var(--white); cursor: pointer; overflow: hidden; }
 .thumbs button[aria-current="true"] { border: 2.5px solid var(--ink); }

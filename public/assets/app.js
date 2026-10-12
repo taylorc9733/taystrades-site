@@ -485,13 +485,18 @@ function productPage(item) {
     <div class="product">
       <div class="p-title"><h1>${esc(item.title)}</h1></div>
       <div class="gallery">
-        <button class="photo main" type="button" data-open-lb="0"><span class="sr">Open photo 1 of ${imgs.length} full screen: </span>
-          <img src="${esc(img(imgs[0], 1600))}" alt="${esc(item.title)}" width="600" height="800" fetchpriority="high">
-          ${isJustListed(item) ? '<span class="new-mark">Just listed</span>' : ""}
-          ${tag(item.price, { size: "lg", tilt: -5 })}
-        </button>
-        ${imgs.length > 1 ? `<div class="thumbs">${imgs.map((u, i) => `<button type="button" data-open-lb="${i}" aria-label="Open photo ${i + 1} of ${imgs.length}"><img src="${esc(img(u, 140))}" alt="" loading="lazy" width="68" height="68"></button>`).join("")}</div>` : ""}
-        <p class="hint">${imgs.length} photo${imgs.length === 1 ? "" : "s"}. Tap one to zoom in.</p>
+        <div class="stage">
+          <button class="photo main" type="button" data-main><span class="sr">Open photo <span data-n>1</span> of ${imgs.length} full screen: </span>
+            <img src="${esc(img(imgs[0], 1600))}" alt="${esc(item.title)}" width="600" height="800" fetchpriority="high" draggable="false">
+            ${isJustListed(item) ? '<span class="new-mark">Just listed</span>' : ""}
+            ${tag(item.price, { size: "lg", tilt: -5 })}
+          </button>
+          ${imgs.length > 1 ? `<button class="g-nav g-prev" type="button" aria-label="Previous photo">${icon("chevL")}</button>
+          <button class="g-nav g-next" type="button" aria-label="Next photo">${icon("chevR")}</button>
+          <span class="g-count" aria-hidden="true"><span data-n>1</span> / ${imgs.length}</span>` : ""}
+        </div>
+        ${imgs.length > 1 ? `<div class="thumbs">${imgs.map((u, i) => `<button type="button" data-thumb="${i}" aria-label="Show photo ${i + 1} of ${imgs.length}" aria-current="${i === 0}"><img src="${esc(img(u, 140))}" alt="" loading="lazy" width="68" height="68"></button>`).join("")}</div>` : ""}
+        <p class="hint">${imgs.length} photo${imgs.length === 1 ? "" : "s"}. ${imgs.length > 1 ? "Use the arrows or swipe, and tap" : "Tap"} the photo to zoom in.</p>
       </div>
       <div class="buy">
         <div class="price-line">${priceHTML(item.price)}<span class="muted">${esc(shippingText(item))}</span></div>
@@ -537,6 +542,40 @@ function soldPage(sold) {
 }
 
 // ----- Lightbox -----
+
+// Item page photo: arrows, swipe and thumbnails change the photo; tapping it opens the lightbox.
+function bindGallery(item) {
+  const g = document.querySelector(".gallery");
+  if (!g) return;
+  const imgs = allImages(item);
+  const photo = g.querySelector("[data-main]");
+  const pic = photo.querySelector("img");
+  let idx = 0;
+  let swiped = false;
+  const show = (i) => {
+    idx = (i + imgs.length) % imgs.length;
+    pic.src = img(imgs[idx], 1600);
+    g.querySelectorAll("[data-n]").forEach((n) => (n.textContent = idx + 1));
+    g.querySelectorAll("[data-thumb]").forEach((b, j) => b.setAttribute("aria-current", j === idx ? "true" : "false"));
+    g.querySelector(`[data-thumb="${idx}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  };
+  photo.addEventListener("click", () => (swiped ? (swiped = false) : openLightbox(item, idx)));
+  if (imgs.length < 2) return;
+  g.querySelector(".g-prev").onclick = () => show(idx - 1);
+  g.querySelector(".g-next").onclick = () => show(idx + 1);
+  g.querySelectorAll("[data-thumb]").forEach((b) => (b.onclick = () => show(Number(b.dataset.thumb))));
+  let x0 = null, y0 = 0;
+  photo.addEventListener("pointerdown", (e) => { x0 = e.clientX; y0 = e.clientY; });
+  photo.addEventListener("pointerup", (e) => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    x0 = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { swiped = true; show(idx + (dx < 0 ? 1 : -1)); }
+  });
+  photo.addEventListener("pointercancel", () => (x0 = null));
+  // Warm the cache so the next photo appears instantly.
+  imgs.slice(1, 3).forEach((u) => (new Image().src = img(u, 1600)));
+}
 
 function openLightbox(item, start) {
   const imgs = allImages(item);
@@ -868,7 +907,7 @@ async function route() {
     const found = id ? await getItem(id) : { sold: { id } };
     if (found.item) {
       main.innerHTML = productPage(found.item);
-      main.querySelectorAll("[data-open-lb]").forEach((b) => b.addEventListener("click", () => openLightbox(found.item, Number(b.dataset.openLb))));
+      bindGallery(found.item);
       meta = metaFor(path, { item: found.item });
     } else {
       main.innerHTML = soldPage(found.sold);
