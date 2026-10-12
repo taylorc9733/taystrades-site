@@ -122,7 +122,7 @@ function card(item, i = 0) {
   const path = itemPath(item);
   return `<article class="card">
     <a class="photo" href="${href(path)}" tabindex="-1" aria-hidden="true">
-      <img src="${esc(img(item.image?.imageUrl, 500))}" alt="" loading="lazy" decoding="async" width="500" height="500">
+      <img src="${esc(img(item.image?.imageUrl, 500))}" alt="" loading="lazy" decoding="async" width="500" height="667">
       ${isJustListed(item) ? '<span class="new-mark">Just listed</span>' : ""}
       ${tag(item.price, { tilt: tilts[i % tilts.length] })}
     </a>
@@ -486,7 +486,7 @@ function productPage(item) {
       <div class="p-title"><h1>${esc(item.title)}</h1></div>
       <div class="gallery">
         <button class="photo main" type="button" data-open-lb="0"><span class="sr">Open photo 1 of ${imgs.length} full screen: </span>
-          <img src="${esc(img(imgs[0], 1600))}" alt="${esc(item.title)}" width="800" height="800" fetchpriority="high">
+          <img src="${esc(img(imgs[0], 1600))}" alt="${esc(item.title)}" width="600" height="800" fetchpriority="high">
           ${isJustListed(item) ? '<span class="new-mark">Just listed</span>' : ""}
           ${tag(item.price, { size: "lg", tilt: -5 })}
         </button>
