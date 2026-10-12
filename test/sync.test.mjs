@@ -2,6 +2,7 @@
 // result through the same code the Pages site uses. Run: node test/sync.test.mjs
 import { run } from "../sync-worker/src/index.js";
 import { getListings, findItem } from "../shared/store.js";
+import config from "../public/config.js";
 
 const kv = new Map();
 const KV = {
@@ -22,7 +23,7 @@ const summary = (l) => ({
   image: { imageUrl: `https://i.ebayimg.com/images/g/${l.id}/s-l225.jpg` }, additionalImages: [],
   itemWebUrl: `https://www.ebay.co.uk/itm/${l.id}`, itemCreationDate: new Date().toISOString(),
   shippingOptions: [{ shippingCost: { value: "3.99", currency: "GBP" } }],
-  seller: { username: "your-ebay-username", feedbackPercentage: "99.8", feedbackScore: 540 },
+  seller: { username: config.ebay.username, feedbackPercentage: "99.8", feedbackScore: 540 },
 });
 globalThis.fetch = async (url, init = {}) => {
   url = String(url);
@@ -36,7 +37,7 @@ globalThis.fetch = async (url, init = {}) => {
     calls.search++;
     if (failSearch) return new Response("boom", { status: 500 });
     const u = new URL(url);
-    if (!u.searchParams.get("filter").includes("sellers:{your-ebay-username}")) throw new Error("no seller filter");
+    if (!u.searchParams.get("filter").includes(`sellers:{${config.ebay.username}}`)) throw new Error("no seller filter");
     // Only the console and phone categories return anything; mirrors eBay returning items in sub-categories.
     const cat = u.searchParams.get("category_ids");
     const map = { 1249: "139971", 15032: "9355" };

@@ -5,4 +5,4 @@ compatibility_date = "2025-09-01"
 
 [[kv_namespaces]]
 binding = "TT_KV"
-id = "REPLACE_WITH_KV_NAMESPACE_ID" # same id as sync-worker/wrangler.toml
+id = "bbd99bb11dce4bc7a2ff4a688093e0ab" # same id as sync-worker/wrangler.toml

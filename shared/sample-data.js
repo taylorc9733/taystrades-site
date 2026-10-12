@@ -115,11 +115,23 @@ export function sampleListings(now = Date.now()) {
   });
 }
 
+// Made-up reviews for the sample-mode preview only.
+export const SAMPLE_REVIEWS = {
+  source: "sample",
+  rating: 4.9,
+  count: 37,
+  reviews: [
+    { author: "Sarah M.", rating: 5, when: "2 weeks ago", text: "Swapped my old Switch and a pile of games for a PS5. Fair price, sorted the same afternoon, and he answered every question on WhatsApp." },
+    { author: "Dan P.", rating: 5, when: "1 month ago", text: "Bought an iPhone through the eBay shop. Battery health was exactly as listed and it arrived next day, well packed." },
+    { author: "Priya K.", rating: 5, when: "2 months ago", text: "Sold my late dad's card collection here. Took the time to price it properly and explained everything. Really decent." },
+  ],
+};
+
 export function sampleData(now = Date.now()) {
   return {
     source: "sample",
     updatedAt: new Date(now).toISOString(),
-    seller: { feedbackPercentage: config.ebay.fallbackFeedback.percentage, feedbackScore: config.ebay.fallbackFeedback.score },
+    seller: { feedbackPercentage: "100", feedbackScore: 312 },
     items: sampleListings(now),
   };
 }

@@ -16,8 +16,7 @@ export async function getListings(env) {
   const live = env.TT_KV ? await env.TT_KV.get(KEYS.listings, "json") : null;
   if (live && Array.isArray(live.items)) return live;
   if (config.showSampleListings || env.SHOW_SAMPLES) return sampleData();
-  const f = config.ebay.fallbackFeedback;
-  return { source: "empty", updatedAt: null, seller: { feedbackPercentage: f.percentage, feedbackScore: f.score }, items: [] };
+  return { source: "empty", updatedAt: null, seller: null, items: [] };
 }
 
 export async function getReviews(env) {

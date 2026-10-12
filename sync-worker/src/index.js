@@ -192,7 +192,7 @@ async function syncEbay(env) {
     JSON.stringify({
       source: "ebay",
       updatedAt: new Date(now).toISOString(),
-      seller: sellerInfo || prev?.seller || { feedbackPercentage: config.ebay.fallbackFeedback.percentage, feedbackScore: config.ebay.fallbackFeedback.score },
+      seller: sellerInfo || prev?.seller || null,
       items,
       ended: ended.slice(0, 300),
     })

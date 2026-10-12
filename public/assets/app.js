@@ -134,7 +134,8 @@ function quote(r) {
   return `<figure class="quote">${stars(r.rating)}<blockquote>${esc(r.text)}</blockquote><footer><b>${who}</b>${r.when ? `, ${esc(r.when)}` : ""}</footer></figure>`;
 }
 
-const feedback = () => DATA.seller || { feedbackPercentage: config.ebay.fallbackFeedback.percentage, feedbackScore: config.ebay.fallbackFeedback.score };
+// Null until the first eBay sync brings in real feedback numbers.
+const feedback = () => (DATA.seller && DATA.seller.feedbackPercentage != null ? DATA.seller : null);
 const feedbackUrl = () => `https://www.ebay.co.uk/fdbk/feedback_profile/${encodeURIComponent(config.ebay.username)}`;
 const reviewsUrl = () => DATA.reviews?.mapsUri || config.google.mapsUrl;
 
@@ -234,8 +235,12 @@ function home() {
   </div></section>
 
   <section class="trustrow" aria-label="Why buy from us"><div class="wrap"><ul>
-    <li>${icon("ebay")}<a href="${esc(feedbackUrl())}" target="_blank" rel="noopener"><b>${esc(fb.feedbackPercentage)}% positive</b><span class="muted">eBay feedback, ${Number(fb.feedbackScore).toLocaleString("en-GB")} ratings</span></a></li>
-    <li>${icon("star")}<a href="${href("/reviews")}"><b>${rev.rating} on Google</b><span class="muted">from ${rev.count} reviews</span></a></li>
+    <li>${icon("ebay")}<a href="${esc(feedbackUrl())}" target="_blank" rel="noopener">${fb
+      ? `<b>${esc(fb.feedbackPercentage)}% positive</b><span class="muted">eBay feedback, ${Number(fb.feedbackScore).toLocaleString("en-GB")} ratings</span>`
+      : `<b>eBay seller</b><span class="muted">See our eBay feedback</span>`}</a></li>
+    <li>${icon("star")}<a href="${href("/reviews")}">${rev.count
+      ? `<b>${rev.rating} on Google</b><span class="muted">from ${rev.count} reviews</span>`
+      : `<b>Google reviews</b><span class="muted">Read or leave one</span>`}</a></li>
     <li>${icon("shield")}<span><b>Pay safely</b><span class="muted">through eBay with buyer protection</span></span></li>
     <li>${icon("swap")}<a href="${href("/trade-in")}"><b>Trade-ins</b><span class="muted">on almost anything</span></a></li>
   </ul></div></section>
@@ -249,7 +254,7 @@ function home() {
     <div class="section-head"><h2>Shop by category</h2></div>
     <div class="tiles">${config.categories.map((c) => {
       const n = items().filter((i) => i.siteCategory === c.slug).length;
-      return `<a class="tile" href="${href(`/shop?cat=${c.slug}`)}">${icon(c.icon)}<b>${esc(c.name)}</b><span>${n ? `${n} item${n === 1 ? "" : "s"}` : "Message us for stock"}</span></a>`;
+      return `<a class="tile" href="${href(`/shop?cat=${c.slug}`)}">${icon(c.icon)}<b>${esc(c.name)}</b><span>${n ? `${n} item${n === 1 ? "" : "s"}` : items().length ? "Message us for stock" : "See what's in"}</span></a>`;
     }).join("")}</div>
   </div></section>
 
@@ -262,10 +267,10 @@ function home() {
     <div class="band-art" aria-hidden="true"><div class="your-item">Your item${tag(null, { note: "Your price here", tilt: 6 })}</div></div>
   </div></section></div>
 
-  <section class="section"><div class="wrap">
+  ${rev.reviews.length ? `<section class="section"><div class="wrap">
     <div class="section-head"><div><h2>What customers say</h2><p class="muted" style="margin-top:6px">${rev.rating} out of 5 from ${rev.count} Google reviews</p></div><a class="textlink" href="${href("/reviews")}">Read all reviews</a></div>
     <div class="quotes">${rev.reviews.slice(0, 3).map(quote).join("")}</div>
-  </div></section>
+  </div></section>` : ""}
 
   <section class="section" style="padding-top:0"><div class="wrap steps-wrap">
     <div><h2>How buying works</h2><ol class="steps buy">
@@ -769,15 +774,17 @@ function reviewsPage() {
   return `
   <div class="wrap page-head">
     <h1>Reviews</h1>
-    <div class="rating-big" style="margin-top:20px"><span class="num">${r.rating}</span><span>${stars(r.rating)}<br><span class="muted">from ${r.count} Google reviews</span></span></div>
+    ${r.count
+      ? `<div class="rating-big" style="margin-top:20px"><span class="num">${r.rating}</span><span>${stars(r.rating)}<br><span class="muted">from ${r.count} Google reviews</span></span></div>`
+      : `<p style="margin-top:12px;font-size:1.125rem">If we've sold you something or bought your old kit, a quick Google review helps other people find us. It takes a minute.</p>`}
     <div class="btn-row" style="margin-top:20px">
       <a class="btn" href="${esc(reviewsUrl())}" target="_blank" rel="noopener">Read all on Google</a>
       <a class="btn btn-primary" href="${esc(config.google.reviewLink)}" target="_blank" rel="noopener">Leave a review</a>
     </div>
-    <div class="feedback-line">${icon("ebay")}<span><b>${esc(fb.feedbackPercentage)}% positive feedback on eBay</b> from ${Number(fb.feedbackScore).toLocaleString("en-GB")} ratings.</span><a class="textlink" href="${esc(feedbackUrl())}" target="_blank" rel="noopener">See our eBay feedback</a></div>
+    <div class="feedback-line">${icon("ebay")}<span>${fb ? `<b>${esc(fb.feedbackPercentage)}% positive feedback on eBay</b> from ${Number(fb.feedbackScore).toLocaleString("en-GB")} ratings.` : "<b>Buying through eBay?</b> Every sale is covered by eBay's buyer protection."}</span><a class="textlink" href="${esc(feedbackUrl())}" target="_blank" rel="noopener">See our eBay feedback</a></div>
   </div>
   <section class="section" style="padding-top:32px"><div class="wrap">
-    <div class="quotes">${r.reviews.map(quote).join("")}</div>
+    ${r.reviews.length ? `<div class="quotes">${r.reviews.map(quote).join("")}</div>` : ""}
     ${r.source === "google" ? `<p class="attrib" style="margin-top:28px">Reviews from Google. Ratings and reviews are updated daily.</p>` : ""}
   </div></section>`;
 }
