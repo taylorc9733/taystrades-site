@@ -24,6 +24,8 @@ async function ensureData() {
 const items = () => DATA.items;
 const newest = (list) => [...list].sort((a, b) => new Date(b.itemCreationDate) - new Date(a.itemCreationDate));
 const catBySlug = (slug) => config.categories.find((c) => c.slug === slug);
+// The catch-all category only shows once it has something in it.
+const shownCats = () => config.categories.filter((c) => !c.catchAll || items().some((i) => i.siteCategory === c.slug));
 
 async function getItem(id) {
   if (DATA.item && idFromPath(itemPath(DATA.item)) === id) return { item: DATA.item };
@@ -73,6 +75,7 @@ const ICONS = {
   laptop: '<rect x="5" y="5" width="14" height="10" rx="1.5"/><path d="M2.5 19h19"/>',
   brick: '<rect x="3" y="10" width="18" height="10" rx="1"/><rect x="5" y="6" width="5" height="4" rx="1"/><rect x="14" y="6" width="5" height="4" rx="1"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  plug: '<path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/>',
   box: '<path d="m3 7 9-4 9 4v10l-9 4-9-4z"/><path d="m3 7 9 4 9-4M12 11v10"/>',
 };
 const icon = (name, cls = "") => `<svg class="icon ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
@@ -278,7 +281,7 @@ function home() {
 
   <section class="section" style="padding-top:0"><div class="wrap">
     <div class="section-head"><h2>Shop by category</h2></div>
-    <div class="tiles">${config.categories.map((c) => {
+    <div class="tiles">${shownCats().map((c) => {
       const n = items().filter((i) => i.siteCategory === c.slug).length;
       return `<a class="tile" href="${href(`/shop?cat=${c.slug}`)}">${icon(c.icon)}<b>${esc(c.name)}</b><span>${n ? `${n} item${n === 1 ? "" : "s"}` : items().length ? "Message us for stock" : "See what's in"}</span></a>`;
     }).join("")}</div>
@@ -368,7 +371,7 @@ function shop() {
     <form class="filters" id="filters" aria-label="Filters" onsubmit="return false">
       <div class="sheet-head"><h2 style="font-size:1.375rem">Filters</h2><button class="icon-btn" type="button" data-close-filters aria-label="Close filters">${icon("close")}</button></div>
       <fieldset><legend>Category</legend>
-        ${[["", "All categories"], ...config.categories.map((c) => [c.slug, c.name])].map(([v, t]) => {
+        ${[["", "All categories"], ...shownCats().map((c) => [c.slug, c.name])].map(([v, t]) => {
           const n = v ? items().filter((i) => i.siteCategory === v).length : items().length;
           return `<label class="check"><input type="radio" name="cat" value="${v}" ${s.cat === v ? "checked" : ""} data-shop="cat">${esc(t)}<span class="count">${n}</span></label>`;
         }).join("")}

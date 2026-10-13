@@ -55,12 +55,23 @@ export default {
 
   // Site categories. ebayCategoryIds are the top-level eBay UK categories the
   // sync searches in (the Browse API needs a category alongside the seller filter).
-  // Add a category here and the next hourly sync picks it up.
+  // Add a category here and the next hourly sync picks it up. Listings in any
+  // other eBay category still show: under "Other electronics" when its eBay
+  // category or title has one of the `match` words, otherwise "Everything else".
+  // Those two only appear on the site once they have something in them.
   categories: [
     { slug: "phones", name: "Phones", icon: "phone", ebayCategoryIds: ["15032"] },
     { slug: "consoles-games", name: "Consoles and games", icon: "console", ebayCategoryIds: ["1249"] },
     { slug: "tech-audio", name: "Tech and audio", icon: "headphones", ebayCategoryIds: ["293", "58058"] },
     { slug: "collectables", name: "Collectables", icon: "card", ebayCategoryIds: ["1", "220"] },
+    { slug: "cameras", name: "Cameras", icon: "camera", ebayCategoryIds: ["625"] },
+    {
+      slug: "electronics", name: "Other electronics", icon: "plug", ebayCategoryIds: [], catchAll: true,
+      match: ["electric", "electrical", "electronic", "appliance", "gadget", "smart", "charger", "battery", "batteries", "power bank",
+        "drone", "radio", "speaker", "bluetooth", "wireless", "usb", "tv", "projector", "sat nav", "dash cam", "led",
+        "hair dryer", "straightener", "shaver", "vacuum", "kindle", "e-reader", "smartwatch", "fitness tracker"],
+    },
+    { slug: "more", name: "Everything else", icon: "box", ebayCategoryIds: [], catchAll: true },
   ],
 
   // Shown on the trade-in page and in its form.

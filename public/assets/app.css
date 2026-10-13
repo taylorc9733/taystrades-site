@@ -361,7 +361,7 @@ legend { padding: 0; margin-bottom: 6px; }
 .tile .icon { width: 36px; height: 36px; stroke-width: 1.75; }
 .tile b { font-family: var(--display); font-size: 1.25rem; font-weight: 700; font-stretch: 90%; line-height: 1.1; margin-top: auto; }
 .tile span { color: var(--slate); }
-@media (min-width: 900px) { .tiles { grid-template-columns: repeat(4, 1fr); gap: 20px; } .tile { min-height: 168px; padding: 24px; } }
+@media (min-width: 900px) { .tiles { grid-template-columns: repeat(3, 1fr); gap: 20px; } .tile { min-height: 168px; padding: 24px; } }
 
 /* Trade-in band */
 .band { background: var(--mint); }

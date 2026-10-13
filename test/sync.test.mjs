@@ -40,7 +40,7 @@ globalThis.fetch = async (url, init = {}) => {
     if (!u.searchParams.get("filter").includes(`sellers:{${config.ebay.username}}`)) throw new Error("no seller filter");
     // Only the console and phone categories return anything; mirrors eBay returning items in sub-categories.
     const cat = u.searchParams.get("category_ids");
-    const map = { 1249: "139971", 15032: "9355" };
+    const map = { 1249: "139971", 15032: "9355", 625: "15230", 11700: "20625", 26395: "11858" };
     const hits = listings.filter((l) => map[cat] === l.cat);
     return Response.json({ total: hits.length, itemSummaries: hits.map(summary) });
   }
@@ -87,10 +87,28 @@ check(!findItem(data, "222") && data.ended.some((e) => e.id === "222"), "sold it
 check(calls.token === tokensBefore, "token reused from cache, no second token call");
 check(findItem(data, "111").aspects?.length === 1, "existing details carried over without refetching");
 
-// 4. eBay down: keep last good data
+// 4. Listings outside the site's named categories still show
+listings.push({ id: "444", title: "Canon Sure Shot 115U", price: "49.99", cat: "15230" });
+listings.push({ id: "555", title: "Desk lamp", price: "12.00", cat: "20625" });
+r = await run(env);
+data = await getListings(env);
+check(findItem(data, "444")?.siteCategory === "cameras", "camera listing shows under Cameras: " + r.ebay);
+for (let n = 0; n < 6 && !findItem(data, "555"); n++) { await run(env); data = await getListings(env); }
+check(findItem(data, "555")?.siteCategory === "more", "listing in an unnamed eBay category shows under Everything else");
+listings.push({ id: "666", title: "Philips Electric Shaver Series 5000", price: "35.00", cat: "11858" });
+listings.push({ id: "777", title: "Ledger notebook", price: "5.00", cat: "20625" });
+for (let n = 0; n < 6 && !findItem(data, "666"); n++) { await run(env); data = await getListings(env); }
+check(findItem(data, "666")?.siteCategory === "electronics", "electrical item in an unnamed eBay category shows under Other electronics");
+check(findItem(data, "777")?.siteCategory === "more", "non-electronics stays under Everything else (no partial word matches)");
+let before = calls.search;
+await run(env);
+check(calls.search - before <= 45 - 1, "a run stays inside the subrequest budget: " + (calls.search - before) + " searches");
+check(!!findItem(await getListings(env), "555"), "catch-all listing stays on later runs");
+
+// 5. eBay down: keep last good data
 failSearch = true;
 r = await run(env);
 data = await getListings(env);
-check(/failed, kept last good data/.test(r.ebay) && data.items.length === 2, "eBay failure keeps the previous listings: " + r.ebay);
+check(/failed, kept last good data/.test(r.ebay) && data.items.length === 6, "eBay failure keeps the previous listings: " + r.ebay);
 
 console.log("calls:", calls);
