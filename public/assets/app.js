@@ -72,6 +72,7 @@ const ICONS = {
   camera: '<path d="M4 7h3.5L9 5h6l1.5 2H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/>',
   laptop: '<rect x="5" y="5" width="14" height="10" rx="1.5"/><path d="M2.5 19h19"/>',
   brick: '<rect x="3" y="10" width="18" height="10" rx="1"/><rect x="5" y="6" width="5" height="4" rx="1"/><rect x="14" y="6" width="5" height="4" rx="1"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
   box: '<path d="m3 7 9-4 9 4v10l-9 4-9-4z"/><path d="m3 7 9 4 9-4M12 11v10"/>',
 };
 const icon = (name, cls = "") => `<svg class="icon ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
@@ -144,6 +145,20 @@ function quote(r) {
   const who = r.authorUri ? `<a href="${esc(r.authorUri)}" target="_blank" rel="noopener">${esc(r.author)}</a>` : esc(r.author);
   return `<figure class="quote">${stars(r.rating)}<blockquote>${esc(r.text)}</blockquote><footer><b>${who}</b>${r.when ? `, ${esc(r.when)}` : ""}</footer></figure>`;
 }
+
+// eBay feedback cards, from config.ebayFeedback.
+const ebayFb = () => config.ebayFeedback || [];
+function fbCard(f) {
+  return `<figure class="fbcard">
+    <div class="fb-top"><span class="fb-pos">${icon("check")}Positive</span>${f.when ? `<span class="muted">${esc(f.when)}</span>` : ""}</div>
+    <blockquote>${esc(f.text)}</blockquote>
+    <footer>${f.item ? `<span class="fb-item">${esc(f.item)}</span>` : ""}${f.buyer ? `<span class="muted">Buyer ${esc(f.buyer)}</span>` : ""}</footer>
+  </figure>`;
+}
+const fbSection = (list, head) => list.length ? `<section class="section"${head ? ' style="padding-top:0"' : ""}><div class="wrap">
+    <div class="section-head"><div><h2>${head ? "Feedback from eBay buyers" : "eBay buyer feedback"}</h2><p class="muted" style="margin-top:6px">Real comments left on our eBay sales.</p></div><a class="textlink" href="${esc(feedbackUrl())}" target="_blank" rel="noopener">See all on eBay</a></div>
+    <div class="fbcards">${list.map(fbCard).join("")}</div>
+  </div></section>` : "";
 
 // Null until the first eBay sync brings in real feedback numbers.
 const feedback = () => (DATA.seller && DATA.seller.feedbackPercentage != null ? DATA.seller : null);
@@ -282,6 +297,8 @@ function home() {
     <div class="section-head"><div><h2>What customers say</h2><p class="muted" style="margin-top:6px">${rev.rating} out of 5 from ${rev.count} Google reviews</p></div><a class="textlink" href="${href("/reviews")}">Read all reviews</a></div>
     <div class="quotes">${rev.reviews.slice(0, 3).map(quote).join("")}</div>
   </div></section>` : ""}
+
+  ${fbSection(ebayFb().slice(0, 3), true)}
 
   <section class="section" style="padding-top:0"><div class="wrap steps-wrap">
     <div><h2>How buying works</h2><ol class="steps buy">
@@ -837,7 +854,8 @@ function reviewsPage() {
   <section class="section" style="padding-top:32px"><div class="wrap">
     ${r.reviews.length ? `<div class="quotes">${r.reviews.map(quote).join("")}</div>` : ""}
     ${r.source === "google" ? `<p class="attrib" style="margin-top:28px">Reviews from Google. Ratings and reviews are updated daily.</p>` : ""}
-  </div></section>`;
+  </div></section>
+  ${fbSection(ebayFb(), false)}`;
 }
 
 function contactPage() {
