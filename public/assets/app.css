@@ -393,6 +393,16 @@ legend { padding: 0; margin-bottom: 6px; }
 .quote blockquote { margin: 0; font-size: 1.0625rem; }
 .quote footer { color: var(--slate); }
 .quote footer b { color: var(--ink); }
+.fbcards { display: grid; gap: 16px; }
+.fbcard { margin: 0; display: grid; gap: 12px; align-content: start; padding: 18px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); }
+.fb-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .875rem; }
+.fb-pos { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px 3px 6px; border-radius: 999px; background: var(--mint); border: 1px solid var(--mint-line); font-weight: 700; color: var(--ink); }
+.fb-pos .icon { width: 16px; height: 16px; stroke-width: 2.5; }
+.fbcard blockquote { margin: 0; font-size: 1rem; }
+.fbcard footer { display: grid; gap: 2px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: .875rem; }
+.fb-item { font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (min-width: 640px) { .fbcards { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 900px) { .fbcards { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
 @media (min-width: 900px) { .quotes { grid-template-columns: repeat(3, 1fr); gap: 32px; } }
 .rating-big { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .rating-big .num { font-family: var(--display); font-weight: 800; font-size: 4rem; line-height: 1; font-variant-numeric: tabular-nums; }

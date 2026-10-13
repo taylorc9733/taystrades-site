@@ -91,6 +91,12 @@ export default {
   // While this is empty, the site invites people to leave a review instead.
   fallbackReviews: { rating: null, count: 0, reviews: [] },
 
+  // eBay feedback shown as small cards on the home and reviews pages.
+  // Copy real comments from https://www.ebay.co.uk/fdbk/feedback_profile/taystrades
+  // Newest first. Leave empty to hide the cards. Example:
+  // { text: "Fast postage, item exactly as described.", buyer: "j***n", item: "iPhone 13 128GB", when: "Sep 2026" },
+  ebayFeedback: [],
+
   faq: [
     { q: "How do you value my item?", a: "We check recent sold prices on eBay for the same model and condition, then allow for testing, cleaning and fees. Swaps get a better value than cash because the money stays with us." },
     { q: "How quickly will you reply?", a: "Usually within a couple of hours during opening hours. Messages sent late are answered the next morning." },

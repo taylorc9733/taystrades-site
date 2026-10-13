@@ -1,7 +1,7 @@
 // Builds a static, clickable sample-mode preview into ./preview (no Worker needed).
 // Uses #/hash routes so it works from any static host. Run: node scripts/build-preview.mjs
 import { readFileSync, writeFileSync, cpSync, rmSync, mkdirSync } from "node:fs";
-import { sampleData, SAMPLE_REVIEWS } from "../shared/sample-data.js";
+import { sampleData, SAMPLE_REVIEWS, SAMPLE_EBAY_FEEDBACK } from "../shared/sample-data.js";
 import config from "../public/config.js";
 
 const root = new URL("../", import.meta.url);
@@ -16,7 +16,7 @@ for (const i of data.items) {
   i.image.imageUrl = i.image.imageUrl.slice(1);
   i.additionalImages.forEach((a) => (a.imageUrl = a.imageUrl.slice(1)));
 }
-const payload = { ...data, reviews: SAMPLE_REVIEWS };
+const payload = { ...data, reviews: SAMPLE_REVIEWS, ebayFeedback: SAMPLE_EBAY_FEEDBACK };
 
 const html = readFileSync(new URL("public/index.html", root), "utf8")
   .replace(/(href|src)="\/(?!\/)/g, '$1="')

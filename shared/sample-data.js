@@ -127,6 +127,16 @@ export const SAMPLE_REVIEWS = {
   ],
 };
 
+// Made-up eBay feedback for the preview only. The live site uses config.ebayFeedback.
+export const SAMPLE_EBAY_FEEDBACK = [
+  { text: "Great seller. Phone arrived next day, battery health exactly as listed. Would buy again.", buyer: "s***h", item: "Apple iPhone 13 128GB Midnight", when: "Sep 2026" },
+  { text: "Really well packed and in better condition than the photos. Quick replies to my questions too.", buyer: "d***7", item: "Nintendo Switch OLED White", when: "Sep 2026" },
+  { text: "Card was perfectly protected in a toploader and arrived fast. Top seller, thanks!", buyer: "k***a", item: "Charizard ex 151 Special Illustration Rare", when: "Aug 2026" },
+  { text: "Brilliant, exactly as described. Smooth transaction.", buyer: "m***e", item: "Sony WH-1000XM4 Headphones", when: "Aug 2026" },
+  { text: "Super fast dispatch and great communication. A+++", buyer: "t***r", item: "LEGO Star Wars X-Wing 75301", when: "Jul 2026" },
+  { text: "Console works perfectly, came cleaned and boxed. Very happy.", buyer: "a***n", item: "Xbox Series S 512GB", when: "Jul 2026" },
+];
+
 export function sampleData(now = Date.now()) {
   return {
     source: "sample",
