@@ -95,7 +95,18 @@ export default {
   // Copy real comments from https://www.ebay.co.uk/fdbk/feedback_profile/taystrades
   // Newest first. Leave empty to hide the cards. Example:
   // { text: "Fast postage, item exactly as described.", buyer: "j***n", item: "iPhone 13 128GB", when: "Sep 2026" },
-  ebayFeedback: [],
+  // Buyer names are shortened so their full eBay usernames aren't published.
+  ebayFeedback: [
+    { text: "Great seller! The phone was exactly as described and was dispatched very quickly. Everything was perfect. Highly recommended!", buyer: "d***0", item: "Apple iPhone 17 Pro Max 256GB Cosmic Orange", when: "Past month" },
+    { text: "Thank you, I'm really pleased. Great item exactly as described. Arrived quickly and well packaged. Great customer service.", buyer: "g***2", item: "Apple iPhone 16e 128GB Black", when: "Past 6 months" },
+    { text: "Item was received as described. The seller was great at ensuring everything went well and also was kind to refund me the postage despite the great price. Will definitely be coming back for more deals.", buyer: "k***0", item: "Samsung Galaxy S26 Ultra 256GB Black", when: "Past 6 months" },
+    { text: "Very happy with my eBay experience with this seller. Great condition item, good value, fast dispatch, hope to buy from them again!", buyer: "s***3", item: "SanDisk Ultra 512GB microSD card", when: "Past month" },
+    { text: "Great seller, I received it very fast and was all well packed and in good condition as described, would recommend.", buyer: "d***w", item: "Modded PS Vita 1000 OLED", when: "Past month" },
+    { text: "Seller was clear about the specifications and performance of the item and came as described. Postage was quickly received and packaged in the best way that protected the components.", buyer: "s***0", item: "Gaming PC, Ryzen 7 7800X3D, RX 9070 XT", when: "Past 6 months" },
+    { text: "Great eBayer. Phone received in great condition. As described. Very good value. Well recommended. Swift postage and delivery.", buyer: "m***0", item: "Samsung Galaxy S25 Ultra 1TB Titanium", when: "Past year" },
+    { text: "Excellent comms and after sales support. +++++", buyer: "m***n", item: "Apple iPhone 16e 128GB Black", when: "Past 6 months" },
+    { text: "As described. Recommend!", buyer: "c***k", item: "Nikon Coolpix S3500 Camera", when: "Past month" },
+  ],
 
   faq: [
     { q: "How do you value my item?", a: "We check recent sold prices on eBay for the same model and condition, then allow for testing, cleaning and fees. Swaps get a better value than cash because the money stays with us." },

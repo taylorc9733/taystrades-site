@@ -146,8 +146,8 @@ function quote(r) {
   return `<figure class="quote">${stars(r.rating)}<blockquote>${esc(r.text)}</blockquote><footer><b>${who}</b>${r.when ? `, ${esc(r.when)}` : ""}</footer></figure>`;
 }
 
-// eBay feedback cards. The preview carries its own placeholder list; the live site reads config.
-const ebayFb = () => DATA.ebayFeedback || config.ebayFeedback || [];
+// eBay feedback cards, from config.ebayFeedback.
+const ebayFb = () => config.ebayFeedback || [];
 function fbCard(f) {
   return `<figure class="fbcard">
     <div class="fb-top"><span class="fb-pos">${icon("check")}Positive</span>${f.when ? `<span class="muted">${esc(f.when)}</span>` : ""}</div>
