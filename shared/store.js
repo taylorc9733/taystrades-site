@@ -8,6 +8,7 @@ export const KEYS = {
   reviews: "reviews:v1",
   token: "ebay:token",
   status: "sync:status",
+  scan: "sync:scan",
 };
 
 // Live data if the sync has written any. Otherwise sample mode, or (on the live

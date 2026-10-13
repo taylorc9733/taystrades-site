@@ -24,6 +24,8 @@ async function ensureData() {
 const items = () => DATA.items;
 const newest = (list) => [...list].sort((a, b) => new Date(b.itemCreationDate) - new Date(a.itemCreationDate));
 const catBySlug = (slug) => config.categories.find((c) => c.slug === slug);
+// The catch-all category only shows once it has something in it.
+const shownCats = () => config.categories.filter((c) => !c.catchAll || items().some((i) => i.siteCategory === c.slug));
 
 async function getItem(id) {
   if (DATA.item && idFromPath(itemPath(DATA.item)) === id) return { item: DATA.item };
@@ -278,7 +280,7 @@ function home() {
 
   <section class="section" style="padding-top:0"><div class="wrap">
     <div class="section-head"><h2>Shop by category</h2></div>
-    <div class="tiles">${config.categories.map((c) => {
+    <div class="tiles">${shownCats().map((c) => {
       const n = items().filter((i) => i.siteCategory === c.slug).length;
       return `<a class="tile" href="${href(`/shop?cat=${c.slug}`)}">${icon(c.icon)}<b>${esc(c.name)}</b><span>${n ? `${n} item${n === 1 ? "" : "s"}` : items().length ? "Message us for stock" : "See what's in"}</span></a>`;
     }).join("")}</div>
@@ -368,7 +370,7 @@ function shop() {
     <form class="filters" id="filters" aria-label="Filters" onsubmit="return false">
       <div class="sheet-head"><h2 style="font-size:1.375rem">Filters</h2><button class="icon-btn" type="button" data-close-filters aria-label="Close filters">${icon("close")}</button></div>
       <fieldset><legend>Category</legend>
-        ${[["", "All categories"], ...config.categories.map((c) => [c.slug, c.name])].map(([v, t]) => {
+        ${[["", "All categories"], ...shownCats().map((c) => [c.slug, c.name])].map(([v, t]) => {
           const n = v ? items().filter((i) => i.siteCategory === v).length : items().length;
           return `<label class="check"><input type="radio" name="cat" value="${v}" ${s.cat === v ? "checked" : ""} data-shop="cat">${esc(t)}<span class="count">${n}</span></label>`;
         }).join("")}

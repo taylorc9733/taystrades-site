@@ -8,8 +8,20 @@ import { shortId } from "../../public/assets/lib.js";
 const EBAY = "https://api.ebay.com";
 const SCOPE = "https://api.ebay.com/oauth/api_scope";
 const PAGE = 200; // Browse API maximum
-const MAX_PAGES = 10; // per category, keeps us well inside the free plan's 50 subrequests
+const MAX_PAGES = 10; // per category
+const SUBREQUESTS = 45; // the free plan allows 50 per run; keep a margin
 const DETAIL_BUDGET = 25; // item detail calls per run; the rest are picked up next hour
+const SCAN_PER_RUN = 8; // other eBay categories checked per run for stray listings
+
+// Every top-level eBay UK category. The Browse API can't search a seller's whole
+// shop at once, so categories the site doesn't name are checked a few per run;
+// any that turn out to hold listings are then searched every run.
+const TOP_CATEGORIES = [
+  "20081", "550", "2984", "267", "12576", "625", "11450", "11116", "1", "58058",
+  "14339", "237", "1305", "11232", "159912", "26395", "3252", "11700", "281", "15032",
+  "11233", "619", "1281", "870", "293", "888", "64482", "260", "220", "131090",
+  "1249", "40", "99",
+];
 const DETAIL_MAX_AGE = 7 * 86400000;
 const ENDED_KEEP = 90 * 86400000;
 
@@ -77,6 +89,7 @@ async function getToken(env) {
     },
     body: new URLSearchParams({ grant_type: "client_credentials", scope: SCOPE }),
   });
+  subrequests++;
   if (!res.ok) throw new Error(`token ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const body = await res.json();
   memToken = { token: body.access_token, expiresAt: now + body.expires_in * 1000 };
@@ -85,7 +98,10 @@ async function getToken(env) {
   return memToken.token;
 }
 
+let subrequests = 0;
+
 async function ebayGet(env, path) {
+  subrequests++;
   const res = await fetch(`${EBAY}${path}`, {
     headers: {
       authorization: `Bearer ${await getToken(env)}`,
@@ -115,25 +131,55 @@ function fromSummary(s, siteCategory) {
 }
 
 async function syncEbay(env) {
+  subrequests = 0;
   const seller = encodeURIComponent(`sellers:{${config.ebay.username}}`);
   const found = new Map();
   let sellerInfo = null;
 
-  for (const cat of config.categories) {
-    for (const catId of cat.ebayCategoryIds) {
-      for (let page = 0, offset = 0; page < MAX_PAGES; page++, offset += PAGE) {
-        const data = await ebayGet(
-          env,
-          `/buy/browse/v1/item_summary/search?category_ids=${catId}&filter=${seller}&limit=${PAGE}&offset=${offset}`
-        );
-        for (const s of data.itemSummaries || []) {
-          if (!found.has(s.itemId)) found.set(s.itemId, fromSummary(s, cat.slug));
-          if (!sellerInfo && s.seller) sellerInfo = { feedbackPercentage: s.seller.feedbackPercentage, feedbackScore: s.seller.feedbackScore };
-        }
-        if (!data.next || offset + PAGE >= (data.total || 0)) break;
+  // Returns how many listings the seller has in that eBay category.
+  async function searchCategory(catId, siteCategory) {
+    let total = 0;
+    for (let page = 0, offset = 0; page < MAX_PAGES; page++, offset += PAGE) {
+      const data = await ebayGet(
+        env,
+        `/buy/browse/v1/item_summary/search?category_ids=${catId}&filter=${seller}&limit=${PAGE}&offset=${offset}`
+      );
+      total = data.total || 0;
+      for (const s of data.itemSummaries || []) {
+        if (!found.has(s.itemId)) found.set(s.itemId, fromSummary(s, siteCategory));
+        if (!sellerInfo && s.seller) sellerInfo = { feedbackPercentage: s.seller.feedbackPercentage, feedbackScore: s.seller.feedbackScore };
       }
+      if (!data.next || offset + PAGE >= total) break;
+    }
+    return total;
+  }
+
+  for (const cat of config.categories) {
+    for (const catId of cat.ebayCategoryIds) await searchCategory(catId, cat.slug);
+  }
+
+  // Listings in eBay categories the site doesn't name go under the catch-all.
+  const catchAll = config.categories.find((c) => c.catchAll)?.slug || "more";
+  const named = new Set(config.categories.flatMap((c) => c.ebayCategoryIds));
+  const others = TOP_CATEGORIES.filter((id) => !named.has(id));
+  const scan = (await env.TT_KV.get(KEYS.scan, "json")) || { active: [], cursor: 0 };
+  const active = new Set(scan.active.filter((id) => others.includes(id)));
+
+  for (const id of [...active]) {
+    if ((await searchCategory(id, catchAll)) === 0) active.delete(id);
+  }
+  let cursor = scan.cursor % Math.max(1, others.length);
+  for (let n = 0; n < Math.min(SCAN_PER_RUN, others.length) && subrequests < SUBREQUESTS - 5; n++) {
+    const id = others[cursor];
+    cursor = (cursor + 1) % others.length;
+    if (active.has(id)) continue;
+    try {
+      if ((await searchCategory(id, catchAll)) > 0) active.add(id);
+    } catch (err) {
+      console.error(`scan of eBay category ${id} failed`, err.message);
     }
   }
+  await env.TT_KV.put(KEYS.scan, JSON.stringify({ active: [...active], cursor }));
 
   const prev = await env.TT_KV.get(KEYS.listings, "json");
   const prevItems = new Map((prev?.items || []).map((i) => [i.itemId, i]));
@@ -159,7 +205,7 @@ async function syncEbay(env) {
   const stale = items
     .filter((i) => !i.detailFetchedAt || now - i.detailFetchedAt > DETAIL_MAX_AGE)
     .sort((a, b) => (a.detailFetchedAt || 0) - (b.detailFetchedAt || 0))
-    .slice(0, DETAIL_BUDGET);
+    .slice(0, Math.max(0, Math.min(DETAIL_BUDGET, SUBREQUESTS - subrequests)));
 
   let details = 0;
   for (const item of stale) {
