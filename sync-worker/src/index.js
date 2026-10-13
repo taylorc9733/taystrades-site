@@ -159,7 +159,7 @@ async function syncEbay(env) {
   }
 
   // Listings in eBay categories the site doesn't name go under the catch-all.
-  const catchAll = config.categories.find((c) => c.catchAll)?.slug || "more";
+  const catchAll = config.categories.find((c) => c.catchAll && !c.match)?.slug || "more";
   const named = new Set(config.categories.flatMap((c) => c.ebayCategoryIds));
   const others = TOP_CATEGORIES.filter((id) => !named.has(id));
   const scan = (await env.TT_KV.get(KEYS.scan, "json")) || { active: [], cursor: 0 };
@@ -180,6 +180,16 @@ async function syncEbay(env) {
     }
   }
   await env.TT_KV.put(KEYS.scan, JSON.stringify({ active: [...active], cursor }));
+
+  // Sort catch-all listings into a matching catch-all category, e.g. "Other electronics".
+  const sorters = config.categories
+    .filter((c) => c.catchAll && c.match?.length)
+    .map((c) => ({ slug: c.slug, re: new RegExp(`\\b(${c.match.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})s?\\b`, "i") }));
+  for (const item of found.values()) {
+    if (item.siteCategory !== catchAll) continue;
+    const text = [item.title, ...item.categories.map((c) => c.categoryName)].join(" | ");
+    item.siteCategory = sorters.find((s) => s.re.test(text))?.slug || catchAll;
+  }
 
   const prev = await env.TT_KV.get(KEYS.listings, "json");
   const prevItems = new Map((prev?.items || []).map((i) => [i.itemId, i]));

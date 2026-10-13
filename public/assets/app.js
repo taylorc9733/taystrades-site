@@ -75,6 +75,7 @@ const ICONS = {
   laptop: '<rect x="5" y="5" width="14" height="10" rx="1.5"/><path d="M2.5 19h19"/>',
   brick: '<rect x="3" y="10" width="18" height="10" rx="1"/><rect x="5" y="6" width="5" height="4" rx="1"/><rect x="14" y="6" width="5" height="4" rx="1"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  plug: '<path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/>',
   box: '<path d="m3 7 9-4 9 4v10l-9 4-9-4z"/><path d="m3 7 9 4 9-4M12 11v10"/>',
 };
 const icon = (name, cls = "") => `<svg class="icon ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
