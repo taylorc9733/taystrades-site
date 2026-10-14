@@ -11,10 +11,12 @@ export function money(price) {
   return n.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Collection price: the eBay price less config.collectionDiscount, rounded down to the pound.
+// Collection price: the eBay price less config.collectionDiscount (or its byCategory
+// override for the item's site category), rounded down to the pound.
 // Returns null when the discount is off or would save less than £1.
 export function collectPrice(item) {
-  const pct = Number(config.collectionDiscount?.percent) || 0;
+  const d = config.collectionDiscount || {};
+  const pct = Number(d.byCategory?.[item?.siteCategory] ?? d.percent) || 0;
   const full = Number(item?.price?.value ?? item?.price ?? 0);
   if (pct <= 0 || !full) return null;
   const price = Math.floor(full * (1 - pct / 100));
