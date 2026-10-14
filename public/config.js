@@ -46,7 +46,8 @@ export default {
 
   // Discount for buyers who collect in person instead of buying on eBay (no eBay fees or postage).
   // percent: 0 turns it off. The collection price is rounded down to the whole pound.
-  collectionDiscount: { percent: 10 },
+  // byCategory overrides the percent for a site category (by slug).
+  collectionDiscount: { percent: 10, byCategory: { phones: 5 } },
 
   analytics: {
     plausibleDomain: "", // e.g. "taystrades.co.uk" once you have a Plausible site. Tracks button clicks.
