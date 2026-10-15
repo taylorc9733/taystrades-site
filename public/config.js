@@ -53,8 +53,9 @@ export default {
   buyerProtectionFee: { fixed: 0.10, bands: [[20, 7], [300, 4], [4000, 2]] },
   // Items listed at flatFrom or more are flatPercent off the listed price for collection,
   // and the site shows that percentage as the saving.
-  // Items under roundBelow collect at the listed price rounded down to the pound (£129.99 -> £129).
-  collection: { flatFrom: 300, flatPercent: 5, roundBelow: 200 },
+  // Items under roundBelow collect at the listed price rounded down to the nearest roundTo
+  // (£129.99 -> £125). Items under £10 round down to the pound instead.
+  collection: { flatFrom: 300, flatPercent: 5, roundBelow: 200, roundTo: 5 },
 
   analytics: {
     plausibleDomain: "", // e.g. "taystrades.co.uk" once you have a Plausible site. Tracks button clicks.
