@@ -51,7 +51,8 @@ export default {
   // fixed £0.10 plus 7% up to £20, 4% from £20 to £300, 2% from £300 to £4,000.
   // Collection price = item price; the site shows this fee plus postage as the saving.
   buyerProtectionFee: { fixed: 0.10, bands: [[20, 7], [300, 4], [4000, 2]] },
-  // Items listed at flatFrom or more are also flatPercent off for collection, rounded down to the pound.
+  // Items listed at flatFrom or more are flatPercent off the listed price for collection,
+  // and the site shows that percentage as the saving.
   collection: { flatFrom: 300, flatPercent: 5 },
 
   analytics: {
