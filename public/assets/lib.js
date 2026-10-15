@@ -11,17 +11,31 @@ export function money(price) {
   return n.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Collection price: the eBay price less config.collectionDiscount (or its byCategory
-// override for the item's site category), rounded down to the pound.
-// Returns null when the discount is off or would save less than £1.
+// Collection price: the listed item price, with none of what eBay adds at checkout
+// (less a flat percentage on pricier items, see config.collection).
+// The saving is eBay's Buyer Protection fee (config.buyerProtectionFee bands) plus postage.
+export function buyerFee(price) {
+  const f = config.buyerProtectionFee;
+  if (!f) return 0;
+  let fee = f.fixed || 0, from = 0;
+  for (const [upTo, pct] of f.bands) {
+    if (price > from) fee += (Math.min(price, upTo) - from) * pct / 100;
+    from = upTo;
+  }
+  return Math.round(fee * 100) / 100;
+}
+
 export function collectPrice(item) {
-  const d = config.collectionDiscount || {};
-  const pct = Number(d.byCategory?.[item?.siteCategory] ?? d.percent) || 0;
-  const full = Number(item?.price?.value ?? item?.price ?? 0);
-  if (pct <= 0 || !full) return null;
-  const price = Math.floor(full * (1 - pct / 100));
-  const saving = full - price;
-  return saving >= 1 ? { price, saving, pct } : null;
+  const price = Number(item?.price?.value ?? item?.price ?? 0);
+  if (!price) return null;
+  const fee = buyerFee(price);
+  const postage = Number(item?.shippingCost?.value) || 0;
+  const ebayTotal = Math.round((price + fee + postage) * 100) / 100;
+  // From config.collection.flatFrom up, collection is also a flat percentage off the listed price.
+  const c = config.collection || {};
+  const pct = c.flatFrom && price >= c.flatFrom ? c.flatPercent : 0;
+  const collect = pct ? Math.floor(price * (1 - pct / 100)) : price;
+  return { price: collect, listed: price, pct, fee, postage, ebayTotal, saving: Math.round((ebayTotal - collect) * 100) / 100 };
 }
 
 // "249.99" -> { pounds: "249", pence: "99" }
@@ -111,11 +125,11 @@ export const msg = {
       `Hi, I'm interested in ${item.title} (£${money(item.price)}) ${item.itemWebUrl}. Would you consider an offer or a trade-in against it? I have:\n\n`
     ),
   collect: (item, c) =>
-    wa(`Hi, I'd like to collect ${item.title} from ${B.town} at the collection price of £${c.price.toLocaleString("en-GB")}. ${siteUrl(itemPath(item))} When could I pick it up?`),
+    wa(`Hi, I'd like to collect ${item.title} from ${B.town} at the collection price of £${money(c.price)}. ${siteUrl(itemPath(item))} When could I pick it up?`),
   collectMail: (item, c) =>
     mail(
       `Collection: ${item.title}`,
-      `Hi, I'd like to collect ${item.title} from ${B.town} at the collection price of £${c.price.toLocaleString("en-GB")}. ${siteUrl(itemPath(item))}\n\nWhen could I pick it up?\n\n`
+      `Hi, I'd like to collect ${item.title} from ${B.town} at the collection price of £${money(c.price)}. ${siteUrl(itemPath(item))}\n\nWhen could I pick it up?\n\n`
     ),
   tradeIn: (a) => wa(tradeInText(a, "I'll send photos here.")),
   tradeInMail: (a) => mail(`Trade-in price: ${a.item}`, tradeInText(a, "I'll attach photos to this email.")),

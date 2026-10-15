@@ -47,7 +47,12 @@ export default {
   // Discount for buyers who collect in person instead of buying on eBay (no eBay fees or postage).
   // percent: 0 turns it off. The collection price is rounded down to the whole pound.
   // byCategory overrides the percent for a site category (by slug).
-  collectionDiscount: { percent: 10, byCategory: { phones: 5 } },
+  // eBay UK Buyer Protection fee (charged to buyers on private-seller listings):
+  // fixed £0.10 plus 7% up to £20, 4% from £20 to £300, 2% from £300 to £4,000.
+  // Collection price = item price; the site shows this fee plus postage as the saving.
+  buyerProtectionFee: { fixed: 0.10, bands: [[20, 7], [300, 4], [4000, 2]] },
+  // Items listed at flatFrom or more are also flatPercent off for collection, rounded down to the pound.
+  collection: { flatFrom: 300, flatPercent: 5 },
 
   analytics: {
     plausibleDomain: "", // e.g. "taystrades.co.uk" once you have a Plausible site. Tracks button clicks.
