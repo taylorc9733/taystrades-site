@@ -35,7 +35,8 @@ export function collectPrice(item) {
   const c = config.collection || {};
   const pct = c.flatFrom && price >= c.flatFrom ? c.flatPercent : 0;
   // Those items show only the percentage as the saving; cheaper ones show eBay's fee plus postage.
-  const collect = pct ? Math.round(price * (100 - pct)) / 100 : price;
+  // Below config.collection.roundBelow the collection price is rounded down to the pound.
+  const collect = pct ? Math.round(price * (100 - pct)) / 100 : c.roundBelow && price < c.roundBelow ? Math.floor(price) : price;
   const saving = pct ? Math.round((price - collect) * 100) / 100 : Math.round((ebayTotal - collect) * 100) / 100;
   return { price: collect, listed: price, pct, fee, postage, ebayTotal, saving };
 }
