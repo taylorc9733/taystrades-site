@@ -119,10 +119,10 @@ function buyChoice(item) {
   return `<p class="choose-h">Choose how to buy</p>
     <div class="choose">${ebay}
     <div class="opt opt-collect">
-      <span class="opt-save">${c.pct ? `${c.pct}% off` : `Save £${esc(pounds(c.saving))}`}</span>
+      ${c.pct ? `<span class="opt-save">${c.pct}% off</span>` : ""}
       <p class="opt-name">${icon("pin")}Collect in ${esc(B.town)}</p>
       <p class="opt-price">£${esc(pounds(c.price))}</p>
-      <p class="opt-sum">${c.pct ? `Save £${esc(pounds(c.saving))} on the £${esc(pounds(c.listed))} price` : "No fees, no postage"}</p>
+      <p class="opt-sum">${c.pct ? `${c.pct}% off the £${esc(pounds(c.listed))} price. ` : ""}No eBay fees or postage</p>
       <ul class="opt-points"><li>See it before you pay</li><li>Cash or bank transfer</li><li>Not covered by eBay's guarantee</li></ul>
       ${waBtn(msg.collect(item, c), "Reserve it", "btn-block btn-collect")}
     </div></div>`;
@@ -144,7 +144,7 @@ function card(item, i = 0) {
       <h3><a href="${href(path)}">${esc(item.title)}</a></h3>
       <div class="meta">${gradeBadge(item)}<span class="ship">${esc(shippingText(item))}</span></div>
       ${buyBtn(item, "btn-block")}
-      ${(() => { const c = collectPrice(item); return c ? `<a class="btn btn-mint btn-block btn-col" href="${esc(msg.collect(item, c))}" target="_blank" rel="noopener" data-track="WhatsApp">${icon("pin")}Collect, save £${esc(pounds(c.saving))}</a>` : ""; })()}
+      ${(() => { const c = collectPrice(item); return c ? `<a class="btn btn-mint btn-block btn-col" href="${esc(msg.collect(item, c))}" target="_blank" rel="noopener" data-track="WhatsApp">${icon("pin")}Collect for £${esc(pounds(c.price))}</a>` : ""; })()}
     </div>
   </article>`;
 }
