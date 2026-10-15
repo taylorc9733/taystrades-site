@@ -119,10 +119,10 @@ function buyChoice(item) {
   return `<p class="choose-h">Choose how to buy</p>
     <div class="choose">${ebay}
     <div class="opt opt-collect">
-      <span class="opt-save">Save £${esc(pounds(c.saving))}</span>
+      <span class="opt-save">${c.pct ? `${c.pct}% off` : `Save £${esc(pounds(c.saving))}`}</span>
       <p class="opt-name">${icon("pin")}Collect in ${esc(B.town)}</p>
       <p class="opt-price">£${esc(pounds(c.price))}</p>
-      <p class="opt-sum">${c.pct ? `${c.pct}% off, no fees, no postage` : "No fees, no postage"}</p>
+      <p class="opt-sum">${c.pct ? `Save £${esc(pounds(c.saving))} on the £${esc(pounds(c.listed))} price` : "No fees, no postage"}</p>
       <ul class="opt-points"><li>See it before you pay</li><li>Cash or bank transfer</li><li>Not covered by eBay's guarantee</li></ul>
       ${waBtn(msg.collect(item, c), "Reserve it", "btn-block btn-collect")}
     </div></div>`;
