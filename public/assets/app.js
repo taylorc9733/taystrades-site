@@ -101,21 +101,31 @@ function gradeBadge(item) {
   return `<span class="grade" title="${esc(g.explain)}"><span class="pips" aria-hidden="true">${pips}</span>${esc(g.label)}<span class="sr"> condition</span></span>`;
 }
 
-const trustLine = (short) =>
-  `<p class="trust">${icon("shield")}<span>${short ? "Paid through eBay, with buyer protection" : "You pay through eBay, so you're covered by the eBay Money Back Guarantee."}</span></p>`;
-
 const buyBtn = (item, extra = "") =>
   `<a class="btn btn-primary ${extra}" href="${esc(item.itemWebUrl)}" target="_blank" rel="noopener" data-track="Buy on eBay" data-item="${esc(item.title)}">Buy on eBay<span class="sr"> (opens in a new tab)</span></a>`;
 
-function collectBox(item) {
+const pounds = (n) => money(n).replace(/\.00$/, "");
+
+function buyChoice(item) {
   const c = collectPrice(item);
-  if (!c) return "";
-  return `<div class="collect">
-    <p class="collect-head">${icon("pin")}<span>Collect from ${esc(B.town)} for <b>£${esc(c.price.toLocaleString("en-GB"))}</b></span></p>
-    <p class="collect-note">Save £${esc(money(c.saving))} (${c.pct}% off) when you pick it up in person. Pay by cash or bank transfer on collection, after you've seen it. Collection sales aren't covered by eBay's guarantee.</p>
-    ${waBtn(msg.collect(item, c), "Reserve for collection", "btn-block")}
-    <p class="muted collect-mail">Or <a href="${esc(msg.collectMail(item, c))}" data-track="Email">reserve by email</a>.</p>
-  </div>`;
+  const ebay = `<div class="opt">
+      <p class="opt-name">${icon("ebay")}Delivered via eBay</p>
+      <p class="opt-price">£${esc(pounds(c ? c.ebayTotal : item.price.value))}</p>
+      <p class="opt-sum">£${esc(pounds(item.price.value))} + £${esc(money(c?.fee || 0))} eBay buyer protection${c?.postage ? ` + £${esc(money(c.postage))} postage` : ", free postage"}</p>
+      <ul class="opt-points"><li>Tracked delivery</li><li>eBay Money Back Guarantee</li><li>Pay by card or PayPal</li></ul>
+      ${buyBtn(item, "btn-block")}
+    </div>`;
+  if (!c) return `<div class="choose">${ebay}</div>`;
+  return `<p class="choose-h">Choose how to buy</p>
+    <div class="choose">${ebay}
+    <div class="opt opt-collect">
+      <span class="opt-save">Save £${esc(pounds(c.saving))}</span>
+      <p class="opt-name">${icon("pin")}Collect in ${esc(B.town)}</p>
+      <p class="opt-price">£${esc(pounds(c.price))}</p>
+      <p class="opt-sum">${c.pct ? `${c.pct}% off, no fees, no postage` : "No fees, no postage"}</p>
+      <ul class="opt-points"><li>See it before you pay</li><li>Cash or bank transfer</li><li>Not covered by eBay's guarantee</li></ul>
+      ${waBtn(msg.collect(item, c), "Reserve it", "btn-block btn-collect")}
+    </div></div>`;
 }
 
 const waBtn = (url, text, cls = "") => `<a class="btn ${cls}" href="${esc(url)}" target="_blank" rel="noopener" data-track="WhatsApp">${WA}${esc(text)}</a>`;
@@ -134,7 +144,7 @@ function card(item, i = 0) {
       <h3><a href="${href(path)}">${esc(item.title)}</a></h3>
       <div class="meta">${gradeBadge(item)}<span class="ship">${esc(shippingText(item))}</span></div>
       ${buyBtn(item, "btn-block")}
-      ${trustLine(true)}
+      ${(() => { const c = collectPrice(item); return c ? `<a class="btn btn-mint btn-block btn-col" href="${esc(msg.collect(item, c))}" target="_blank" rel="noopener" data-track="WhatsApp">${icon("pin")}Collect, save £${esc(pounds(c.saving))}</a>` : ""; })()}
     </div>
   </article>`;
 }
@@ -242,7 +252,7 @@ function home() {
   <section class="hero"><div class="wrap">
     <div class="copy">
       <h1>Buy it, sell it, swap it. Pre-owned tech and more from ${esc(B.town)}.</h1>
-      <p class="lede">Phones, consoles, games and collectables, graded honestly and sold through eBay. Got something to sell? We'll make you a cash or swap offer.</p>
+      <p class="lede">Phones, consoles, games and collectables, graded honestly. Buy on eBay with tracked delivery, or collect from us in ${esc(B.town)} and pay less. Got something to sell? We'll make you a cash or swap offer.</p>
       <div class="btn-row">
         <a class="btn btn-primary btn-lg" href="${href("/shop")}">Shop items</a>
         <a class="btn btn-mint btn-lg" href="${href("/trade-in")}">Get a trade-in price</a>
@@ -270,7 +280,7 @@ function home() {
     <li>${icon("star")}<a href="${href("/reviews")}">${rev.count
       ? `<b>${rev.rating} on Google</b><span class="muted">from ${rev.count} reviews</span>`
       : `<b>Google reviews</b><span class="muted">Read or leave one</span>`}</a></li>
-    <li>${icon("shield")}<span><b>Pay safely</b><span class="muted">through eBay with buyer protection</span></span></li>
+    <li>${icon("pin")}<span><b>Collect and save</b><span class="muted">no eBay fees or postage when you pick up in ${esc(B.town)}</span></span></li>
     <li>${icon("swap")}<a href="${href("/trade-in")}"><b>Trade-ins</b><span class="muted">on almost anything</span></a></li>
   </ul></div></section>
 
@@ -306,8 +316,8 @@ function home() {
   <section class="section" style="padding-top:0"><div class="wrap steps-wrap">
     <div><h2>How buying works</h2><ol class="steps buy">
       <li><span><b>Find it here</b>Every item has real photos and a condition grade in plain English.</span></li>
-      <li><span><b>Buy on eBay</b>Checkout happens on eBay, so you're covered by their Money Back Guarantee.</span></li>
-      <li><span><b>Get it fast</b>Tracked UK postage, or collect from us in ${esc(B.town)}.</span></li>
+      <li><span><b>Pick how to buy</b>Buy on eBay for tracked delivery and their Money Back Guarantee, or collect from us in ${esc(B.town)} and skip the eBay fees and postage.</span></li>
+      <li><span><b>Collecting?</b>Reserve it on WhatsApp, come and see it, then pay by cash or bank transfer.</span></li>
     </ol></div>
     <div><h2>How trade-ins work</h2><ol class="steps trade">
       <li><span><b>Tell us what you've got</b>Fill in the short form, then send a few photos on WhatsApp.</span></li>
@@ -522,9 +532,7 @@ function productPage(item) {
         <div class="price-line">${priceHTML(item.price)}<span class="muted">${esc(shippingText(item))}</span></div>
         <div>${gradeBadge(item)}</div>
         <div class="actions">
-          ${buyBtn(item, "btn-lg btn-block")}
-          ${trustLine(false)}
-          ${collectBox(item)}
+          ${buyChoice(item)}
           <div class="two">
             ${waBtn(msg.product(item), "Ask a question")}
             <a class="btn btn-mint" href="${esc(msg.offer(item))}" target="_blank" rel="noopener" data-track="WhatsApp" data-kind="offer">${icon("swap")}Offer or trade against this</a>
