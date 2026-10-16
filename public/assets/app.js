@@ -80,7 +80,7 @@ const ICONS = {
 };
 const icon = (name, cls = "") => `<svg class="icon ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
 const WA = '<svg class="icon fill wa" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.6-.3z"/></svg>';
-const LOGO = '<svg viewBox="0 0 64 64" aria-hidden="true"><g transform="rotate(-10 32 32)"><path d="M20 6h24l10 10v42H10V16z" fill="#FFC94D" stroke="#1C2B3A" stroke-width="4" stroke-linejoin="round"/><circle cx="32" cy="17" r="5" fill="#F7F9FB" stroke="#1C2B3A" stroke-width="3.5"/></g></svg>';
+const LOGO = '<svg viewBox="0 0 64 64" aria-hidden="true"><g transform="rotate(-10 32 32)"><path d="M20 6h24l10 10v42H10V16z" fill="#FFC94D" stroke="#1C2B3A" stroke-width="3.5" stroke-linejoin="round"/><circle cx="32" cy="15.5" r="4" fill="#F7F9FB" stroke="#1C2B3A" stroke-width="3"/><path d="M29.3 54V30.9H34.73V54H29.3ZM25.35 35.33V30.9H38.64V35.33H25.35Z" fill="#1C2B3A"/></g></svg>';
 
 function priceHTML(price) {
   const { pounds, pence } = priceParts(price);
