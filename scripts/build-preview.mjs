@@ -20,8 +20,8 @@ const payload = { ...data, reviews: SAMPLE_REVIEWS };
 
 const html = readFileSync(new URL("public/index.html", root), "utf8")
   .replace(/(href|src)="\/(?!\/)/g, '$1="')
-  .replace("<title>Taystrades</title>", "<title>Taystrades preview</title>")
-  .replace("<!--META-->", '<meta name="description" content="Sample-mode preview of the Taystrades website.">\n<script>window.__TT_PREVIEW__ = true;</script>')
+  .replace("<title>Tays Trades</title>", "<title>Tays Trades preview</title>")
+  .replace("<!--META-->", '<meta name="description" content="Sample-mode preview of the Tays Trades website.">\n<script>window.__TT_PREVIEW__ = true;</script>')
   .replace("<!--DATA-->", `<script id="tt-data" type="application/json">${JSON.stringify(payload).replace(/</g, "\\u003c")}</script>`);
 writeFileSync(new URL("index.html", out), html);
 console.log("preview built in ./preview");

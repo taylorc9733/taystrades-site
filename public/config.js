@@ -1,11 +1,13 @@
-// Taystrades site config: the one file to edit for business details,
+// Tays Trades site config: the one file to edit for business details,
 // categories, trade-in categories and fallback reviews.
 // Name, area and phone must match your Google Business Profile exactly,
 // because they feed the LocalBusiness schema Google reads.
 
 export default {
   business: {
-    name: "Taystrades",
+    name: "Tays Trades",
+    // The old one-word spelling, kept so Google links searches for it to this shop.
+    alternateName: "Taystrades",
     // Exactly as your Google Business Profile spells it. Used in the data Google reads.
     googleName: "Tays Trades",
     tagline: "Pre-owned tech, games and collectables. Bought, sold and swapped.",
@@ -34,8 +36,8 @@ export default {
   google: {
     // Swap these for your profile's own links when you have them:
     // the "Ask for reviews" link (g.page/r/...) and your profile's Maps link.
-    reviewLink: "https://www.google.com/maps/search/?api=1&query=Taystrades%20Totton",
-    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Taystrades%20Totton",
+    reviewLink: "https://www.google.com/maps/search/?api=1&query=Tays%20Trades%20Totton",
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Tays%20Trades%20Totton",
     // From Google Maps: Share > Embed a map > copy the src="..." URL. Leave "" to show a link instead.
     mapsEmbedUrl: "",
   },

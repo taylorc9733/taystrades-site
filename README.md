@@ -1,6 +1,6 @@
-# Taystrades website
+# Tays Trades website
 
-Mobile-first shop front for the Taystrades eBay UK shop. It runs on Cloudflare's free tier:
+Mobile-first shop front for the Tays Trades eBay UK shop. It runs on Cloudflare's free tier:
 
 - **Cloudflare Pages** serves the site from `public/`. Pages Functions in `functions/` add each page's title, description, Open Graph tags and schema, and serve `/api/*`, `/sitemap.xml` and `/robots.txt`.
 - **A Cloudflare Worker** in `sync-worker/` runs every hour on a Cron Trigger. It pulls your eBay listings (and, once a day, Google reviews) into **Workers KV**. The site only ever reads KV, so pages stay fast and nothing calls eBay or Google from the browser.

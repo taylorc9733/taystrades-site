@@ -1,4 +1,4 @@
-// Taystrades front end. Plain ES modules, no framework.
+// Tays Trades front end. Plain ES modules, no framework.
 import config from "../config.js";
 import {
   money, priceParts, itemPath, idFromPath, gradeFor, isJustListed, shippingText, img, allImages,

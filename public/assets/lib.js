@@ -168,7 +168,7 @@ export function localBusinessSchema(feedback) {
     "@type": "Store",
     "@id": siteUrl("/#business"),
     name: B.googleName || B.name,
-    alternateName: B.name,
+    alternateName: B.alternateName,
     url: siteUrl("/"),
     telephone: `+${B.whatsapp}`,
     email: B.email,
